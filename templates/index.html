@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Translator Mini App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; padding: 20px; text-align: center; }
+        .container { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        textarea { width: 90%; height: 100px; border-radius: 10px; padding: 10px; border: 1px solid #ccc; }
+        button { background-color: #0088cc; color: white; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; margin-top: 10px; font-size: 16px; }
+        #result { margin-top: 20px; text-align: left; background: #e7f3ff; padding: 15px; border-radius: 10px; display: none; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🌍 AI Translator</h2>
+        <textarea id="inputText" placeholder="Yaha apna text likhein..."></textarea>
+        <br>
+        <button onclick="startTranslate()">Translate Now</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand(); // App ko full screen karne ke liye
+
+        async function startTranslate() {
+            const text = document.getElementById('inputText').value;
+            const resultDiv = document.getElementById('result');
+            
+            if(!text) { alert("Please kuch likhiye!"); return; }
+
+            resultDiv.style.display = 'block';
+            resultDiv.innerText = "Processing by AI...";
+
+            // Yaha hum baad mein backend URL connect karenge
+            // Abhi ke liye ye demo result dikhayega
+            resultDiv.innerHTML = "<b>1. Text:</b> " + text + "\n<b>2. Pronounce:</b> (Processing...)\n<b>3. Translate:</b> (Processing...)";
+        }
+    </script>
+</body>
+                                                                           </html>
+                                                                           
