@@ -5,7 +5,7 @@ from telebot import TeleBot, types
 
 # --- CONFIGURATION (IMPORTANT!) ---
 # Replace these with your actual tokens/keys
-BOT_TOKEN = os.environ.get('BOT_TOKEN', 'YOUR_TELEGRAM_BOT_TOKEN_HERE') 
+BOT_TOKEN = os.environ.get('BOT_TOKEN', '8149059077:AAHsh9V-IJz6C60-OAxK1SJQQWsZnz76ndQ') 
 # MINI_APP_URL will be your Koyeb URL + '/miniapp' after deployment
 MINI_APP_URL = os.environ.get('MINI_APP_URL', 'https://your-koyeb-app-name.koyeb.app/miniapp')
 
@@ -72,7 +72,7 @@ if __name__ == '__main__':
     
     # In production, we'd set up a webhook here. For local/testing, we might use polling.
     # If BOT_TOKEN and MINI_APP_URL are not set as env vars, assume polling for local test.
-    if 'YOUR_TELEGRAM_BOT_TOKEN_HERE' in BOT_TOKEN:
+    if '8149059077:AAHsh9V-IJz6C60-OAxK1SJQQWsZnz76ndQ' in BOT_TOKEN:
         print("Starting bot in polling mode (local test)...")
         bot.remove_webhook()
         bot.infinity_polling()
