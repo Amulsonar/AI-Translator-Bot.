@@ -3,7 +3,7 @@ import google.generativeai as genai
 
 # --- CONFIGURATION ---
 # Apni Gemini API Key yahan dalein ya Koyeb ke Environment Variables mein set karein
-GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', 'YOUR_GEMINI_API_KEY_HERE')
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', 'AIzaSyBMM464tvuXMj0cqtse3lhyN_8EBZ2I4eY')
 
 # Gemini AI Setup
 genai.configure(api_key=GEMINI_API_KEY)
