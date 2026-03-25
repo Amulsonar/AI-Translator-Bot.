@@ -1,85 +1,53 @@
+import telebot
+import google.generativeai as genai
 import os
-import requests
-from flask import Flask, request, render_template_string
-from telebot import TeleBot, types
+from flask import Flask
+import threading
 
-# --- CONFIGURATION (IMPORTANT!) ---
-# Replace these with your actual tokens/keys
-BOT_TOKEN = os.environ.get('BOT_TOKEN', '8149059077:AAHsh9V-IJz6C60-OAxK1SJQQWsZnz76ndQ') 
-# MINI_APP_URL will be your Koyeb URL + '/miniapp' after deployment
-MINI_APP_URL = os.environ.get('MINI_APP_URL', 'https://your-koyeb-app-name.koyeb.app/miniapp')
-
-# Initialize Flask App and TeleBot
+# 1. Flask App Setup (Render ke 'Port Scan Timeout' ko fix karne ke liye)
 app = Flask(__name__)
-bot = TeleBot(BOT_TOKEN, threaded=False) # threaded=False for better cloud hosting compatibility
 
-# --- TELEGRAM BOT LOGIC ---
+@app.route('/')
+def home():
+    return "Bot is Active and Running!"
 
-# 1. Handle /start command - Welcomes users and shows the Mini App button
+def run_flask():
+    # Render hamesha PORT environment variable deta hai
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host='0.0.0.0', port=port)
+
+# 2. API Keys Configuration
+# Yaad rahe: Inhe Render ke 'Environment Variables' mein add karna zaroori hai
+BOT_TOKEN = os.environ.get('BOT_TOKEN')
+GEMINI_KEY = os.environ.get('GEMINI_API_KEY')
+
+bot = telebot.TeleBot(BOT_TOKEN)
+genai.configure(api_key=GEMINI_KEY)
+model = genai.GenerativeModel('gemini-pro')
+
+# 3. Bot Handlers
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
-    chat_id = message.chat.id
-    user_first_name = message.from_user.first_name
-    
-    # Create the inline keyboard button to launch the Mini App
-    markup = types.InlineKeyboardMarkup()
-    # The 'web_app' key is what makes it a Mini App button
-    mini_app_btn = types.InlineKeyboardButton(text="🌍 Open Translator", web_app=types.WebAppInfo(url=MINI_APP_URL))
-    markup.add(mini_app_btn)
+    bot.reply_to(message, "👋 Namaste! Main AI Translator Bot hoon.\n\nKoi bhi message bhejiye, main use Hindi aur Gujarati mein translate kar dunga.")
 
-    welcome_text = f"Hello {user_first_name}! Welcome to the Global AI Translator.\n\n" \
-                   f"Tap the button below to launch our translation Mini App."
-    
-    bot.send_message(chat_id, welcome_text, reply_markup=markup)
-
-# --- FLASK WEB SERVER LOGIC (For Webhook and Mini App Hosting) ---
-
-# 2. Webhook route to receive messages from Telegram
-@app.route(f"/{BOT_TOKEN}", methods=['POST'])
-def receive_update():
-    if request.headers.get('content-type') == 'application/json':
-        json_string = request.get_data().decode('utf-8')
-        update = types.Update.de_json(json_string)
-        bot.process_new_updates([update])
-        return '', 200
-    else:
-        return 'Invalid content-type', 403
-
-# 3. Route to serve the Mini App (templates/index.html)
-@app.route('/miniapp', methods=['GET'])
-def serve_miniapp():
-    # Attempt to read the index.html from the 'templates' folder
+@bot.message_handler(func=lambda message: True)
+def translate_text(message):
     try:
-        # Get the path to index.html within the 'templates' folder
-        template_path = os.path.join(app.root_path, 'templates', 'index.html')
-        with open(template_path, 'r', encoding='utf-8') as f:
-            html_content = f.read()
-        return render_template_string(html_content)
-    except FileNotFoundError:
-        # Fallback if index.html is missing (useful for debugging)
-        return "<h1>Error: templates/index.html not found!</h1>", 404
+        # Gemini AI se translation mangna
+        prompt = f"Translate the following text to both Hindi and Gujarati clearly: {message.text}"
+        response = model.generate_content(prompt)
+        bot.reply_to(message, response.text)
+    except Exception as e:
+        print(f"Error: {e}")
+        bot.reply_to(message, "⚠️ Thodi dikkat aa rahi hai, kripya baad mein koshish karein.")
 
-# 4. Root route (just a placeholder)
-@app.route('/', methods=['GET'])
-def index():
-    return "<h1>Translator Bot Server is Running!</h1>"
-
-# --- MAIN EXECUTION ---
-
-if __name__ == '__main__':
-    # When deployed on platforms like Koyeb, the platform sets the PORT variable
-    port = int(os.environ.get('PORT', 5000))
+# 4. Starting the Engine
+if __name__ == "__main__":
+    # Flask ko alag thread mein chalana taaki bot block na ho
+    t = threading.Thread(target=run_flask)
+    t.start()
     
-    # In production, we'd set up a webhook here. For local/testing, we might use polling.
-    # If BOT_TOKEN and MINI_APP_URL are not set as env vars, assume polling for local test.
-    if '8149059077:AAHsh9V-IJz6C60-OAxK1SJQQWsZnz76ndQ' in BOT_TOKEN:
-        print("Starting bot in polling mode (local test)...")
-        bot.remove_webhook()
-        bot.infinity_polling()
-    else:
-        # Production deployment (webhook mode is generally better for cloud hosting)
-        # Note: Koyeb setup will require setting up the webhook URL on Telegram.
-        # This setup typically requires a separate deployment step to set the webhook.
-        # To keep it simple, you could also use polling on Koyeb, but webhook is cleaner.
-        print("Starting Flask server for webhook...")
-        app.run(host='0.0.0.0', port=port)
+    print("Bot is starting polling...")
+    # Bot ko infinite loop mein daalna
+    bot.infinity_polling()
+    
