@@ -18,7 +18,7 @@ def run_flask():
 # 2. API KEYS (Directly Fixed)
 # Maine yahan se os.environ.get hata diya hai taaki koi error na aaye
 BOT_TOKEN = '8149059077:AAHsh9V-IJz6C60-OAxK1SJQQWsZnz76ndQ'
-GEMINI_KEY = 'AIzaSyDF0Q1VuxxmrzfYRZQhsz9W0Lq7_UI5QiE'
+GEMINI_KEY = 'AIzaSyCadQmp6dvbgrerELKIwVriP0cKxokLXao'
 
 # 3. BOT & AI CONFIGURATION
 bot = telebot.TeleBot(BOT_TOKEN)
