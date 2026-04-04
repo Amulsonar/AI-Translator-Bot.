@@ -18,8 +18,8 @@ def run_flask():
 
 # 2. Bot aur Gemini Setup
 # (Ye keys aapne Render ke Environment Variables mein pehle se dali hui hain)
-BOT_TOKEN = os.environ.get('8149059077:AAHsh9V-IJz6C60-OAxK1SJQQWsZnz76ndQ')
-GEMINI_KEY = os.environ.get('AIzaSyA1q4yIT7OaBKDKPkuIManewyMnntMlXuE')
+BOT_TOKEN = ('8149059077:AAHsh9V-IJz6C60-OAxK1SJQQWsZnz76ndQ')
+GEMINI_KEY = ('AIzaSyA1q4yIT7OaBKDKPkuIManewyMnntMlXuE')
 
 bot = telebot.TeleBot(BOT_TOKEN)
 genai.configure(api_key=GEMINI_KEY)
