@@ -20,20 +20,24 @@ GEMINI_KEY = os.environ.get('GEMINI_API_KEY')
 
 bot = telebot.TeleBot(BOT_TOKEN)
 genai.configure(api_key=GEMINI_KEY)
+
+# Yahan humne model update kiya hai
 model = genai.GenerativeModel('gemini-1.5-flash')
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
-    bot.reply_to(message, "Bot Active!")
+    bot.reply_to(message, "Bot Active! Ab kuch likhiye.")
 
 @bot.message_handler(func=lambda m: True)
 def translate_text(message):
     try:
-        prompt = f"Translate to Hindi and Gujarati: {message.text}"
-        response = model.generate_content(prompt)
+        # Gemini ko instruction
+        response = model.generate_content(f"Translate to Hindi and Gujarati: {message.text}")
         bot.reply_to(message, response.text)
     except Exception as e:
-        bot.reply_to(message, "AI Error")
+        # Ye line humein batayegi ki asli error kya hai
+        print(f"Gemini Error: {e}")
+        bot.reply_to(message, f"AI Error: {str(e)[:50]}")
 
 if __name__ == "__main__":
     threading.Thread(target=run_flask).start()
