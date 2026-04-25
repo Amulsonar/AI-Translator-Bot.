@@ -24,7 +24,7 @@ bot = telebot.TeleBot(BOT_TOKEN)
 genai.configure(api_key=GEMINI_KEY)
 
 # 3. Stable Gemini-Pro Model (Isme 404 error nahi aayega)
-model = genai.GenerativeModel('gemini-pro')
+model = genai.GenerativeModel('models/gemini-pro')
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
