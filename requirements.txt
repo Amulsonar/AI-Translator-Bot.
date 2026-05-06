@@ -1,3 +1,4 @@
+paltform
+google-genai
 pyTelegramBotAPI
-google-generativeai
 flask
